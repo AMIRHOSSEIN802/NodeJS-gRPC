@@ -15,7 +15,13 @@ function ListProduct(req , res , next) {
         res.status(200).json(response);
     });
 }
-function GetProduct(req , res , next) {}
+function GetProduct(req , res , next) {
+    const {id} = req.params;
+    productClient.GetProduct({id} , (err , data) => {
+        if(err) return res.json(err);
+        return res.json(data)
+    })
+}
 function createProduct(req , res , next) {
     const {title , price} = req.query;
     productClient.createProduct({title , price}, (err , data) => {
@@ -23,8 +29,20 @@ function createProduct(req , res , next) {
         return res.json(data);
     })
 }
-function updateProduct(req , res , next) {}
-function deleteProduct(req , res , next) {}
+function updateProduct(req , res , next) {
+    const data = req.query;
+    productClient.updateProduct(data , (err , data) => {
+        if(err) return res.json(err);
+        return res.json(data);
+    })
+}
+function deleteProduct(req , res , next) {
+    const {id} = req.params;
+    productClient.deleteProduct({id} , (err , data)=> {
+        if(err) return res.json(err);
+        return res.json(data);
+    })
+}
 
 module.exports = {
     ListProduct,

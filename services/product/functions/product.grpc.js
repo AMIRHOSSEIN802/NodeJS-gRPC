@@ -7,7 +7,15 @@ async function ListProduct(call , callback) {
         callback(error , null);
     }
 }
-async function GetProduct(call , callback) {}
+async function GetProduct(call , callback) {
+    try {
+        const {id} = call.request;
+        const product = await ProductModel.findOne({id});
+        callback(null , product)
+    } catch (error) {
+        callback(error , null)
+    }
+}
 async function createProduct(call , callback) {
     try {
         const {title, price} = call.request;
@@ -17,8 +25,31 @@ async function createProduct(call , callback) {
         callback(error, null);
     }
 }
-async function updateProduct(call , callback) {}
-async function deleteProduct(call , callback) {}
+async function updateProduct(call , callback) {
+    try {
+        const {id} = call.request;
+        const data = call.request;
+        delete data.id; // Remove id from data to avoid updating it
+        const result = await ProductModel.updateOne({id} , {$set: data});
+        if(result.modifiedCount > 0) return callback(null, {status: "updated"});
+        return callback({message: "cannot update product"}, null);
+    } catch (error) {
+        callback(error, null);
+        
+    }
+}
+async function deleteProduct(call , callback) {
+    try {
+        const {id} = call.request;
+
+        const result = await ProductModel.deleteOne({id});
+        if(result.deletedCount > 0) return callback(null, {status: "deleted"});
+        return callback({message: "cannot delete product"}, null);
+    } catch (error) {
+        callback(error, null);
+    }
+
+}
 
 module.exports = {
     ListProduct,
